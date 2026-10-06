@@ -1,0 +1,26 @@
+!/.gitignore
+
+# igonre
+/*
+.ssh/
+
+.bash_history
+.bash_logout
+.wget-hsts
+.sudo_as_admin_successful
+.cache/
+.copilot/
+.local/
+.vscode-server/
+.vscode-remote-containers/
+wezterm-config/
+
+
+!/.gitignore
+
+# whitelist
+!/.bashrc
+!/.profile
+!/starship.toml
+!/.config/
+
