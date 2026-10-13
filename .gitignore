@@ -16,8 +16,6 @@
 wezterm-config/
 
 
-!/.gitignore
-
 # whitelist
 !/.bashrc
 !/.profile
