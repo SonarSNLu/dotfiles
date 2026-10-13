@@ -21,6 +21,12 @@ HISTFILESIZE=2000
 
 #SSH
 sudo service ssh start
+# Automatically start ssh-agent and add key
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" > /dev/null
+    ssh-add ~/.ssh/id_ed25519_SonarSNU 2>/dev/null || ssh-add ~/.ssh/id_rsa 2>/dev/null
+fi
+
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -142,4 +148,35 @@ alias bashrc='nvim ~/.bashrc'
 #fd-find
 alias fd='fd-find'
 
+#Sonarcove cd from WSL
+alias Scove="nvim /mnt/d/SonarCove/"
+
+#Windows User cd from WSL
+alias lyto="nvim /mnt/c/Users/4lyto"
+
+#Wezterm config edit
+alias wzterm="nvim /mnt/c/Users/4lyto/.wezterm.lua"
+
+#Bread on penguins ytber neovim setting 
+alias nvim="NVIM_APPNAME=nvim/neovim nvim"
+
+# Created by `pipx` on 2026-10-09 19:15:34
+export PATH="$PATH:/home/Bianfuwu/.local/bin"
+
+# Automatically converts and navigates to a copied Windows path in WSL
+cw() {
+    # Strip quotes if they exist, then convert using wslpath
+    local clean_path=$(echo "$1" | tr -d '"')
+    cd "$(wslpath "$clean_path")"
+}
+
+# WSL window path helper i.e: w 'insert command'
+w() {
+    local cmd="$1"
+    local win_path=$(echo "$2" | tr -d '"')
+    local wsl_path=$(wslpath "$win_path")
+    
+    # Run the command with the converted path and any remaining arguments
+    "$cmd" "$wsl_path" "${@:3}"
+}
 
