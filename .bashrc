@@ -19,14 +19,51 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
-#SSH
-sudo service ssh start
+#SSH on startup
+#sudo service ssh start
 # Automatically start ssh-agent and add key
-if [ -z "$SSH_AUTH_SOCK" ]; then
-    eval "$(ssh-agent -s)" > /dev/null
-    ssh-add ~/.ssh/id_ed25519_SonarSNU 2>/dev/null || ssh-add ~/.ssh/id_rsa 2>/dev/null
-fi
+#if [ -z "$SSH_AUTH_SOCK" ]; then
+#    eval "$(ssh-agent -s)" > /dev/null
+#    ssh-add ~/.ssh/id_ed25519_SonarSNU 2>/dev/null || ssh-add ~/.ssh/id_rsa 2>/dev/null
+#fi
 
+# ---- GitHub account switcher ----
+# profile name -> key filename in ~/.ssh   (add a line per account)
+export SSH_AUTH_SOCK="$HOME/.ssh/gh-agent.sock"   # one agent shared by all terminals
+
+_gh_agent() {
+  ssh-add -l >/dev/null 2>&1
+  if [ $? -eq 2 ]; then                            # no agent reachable -> start one
+    rm -f "$SSH_AUTH_SOCK"
+    ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
+  fi
+}                                                  # <- this was missing
+
+# profile name -> key filename in ~/.ssh   (add a line per account)
+declare -A GH_KEYS=(
+  [sonar]=id_ed25519_SonarSNU
+  [portabela]=id_ed25519_Cheeba
+# [work]=id_ed25519_work
+)
+
+ghs() {
+  _gh_agent
+  case "$1" in
+    "")       ssh-add -l ;;                                  # what's unlocked now
+    off|lock) ssh-add -D ;;                                  # lock everything now
+    ls)       printf '%s\n' "${!GH_KEYS[@]}" | sort ;;       # list profiles
+    *)
+      local key="$HOME/.ssh/${GH_KEYS[$1]}"
+      if [ -z "${GH_KEYS[$1]}" ] || [ ! -f "$key" ]; then
+        echo "unknown profile or missing key file: $1"; return 1
+      fi
+      ssh-add -D 2>/dev/null                                 # lock all others first
+      ssh-add -t "${2:-4h}" "$key" ;;                        # unlock this one
+  esac
+}
+complete -W "ls off lock ${!GH_KEYS[*]}" ghs                 # tab completion
+
+alias llock='ghs off && vlock' # so vlock locking the terminal also off the ssh credential
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -180,3 +217,10 @@ w() {
     "$cmd" "$wsl_path" "${@:3}"
 }
 
+
+# fnm
+FNM_PATH="/home/Bianfuwu/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "$(fnm env --shell bash)"
+fi

@@ -122,13 +122,30 @@ vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEn
    end,
 })
 
--- Disable ~ in nvim main menu
-vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
-  callback = function(args)
-    if vim.bo[args.buf].filetype == "alpha" then
-      vim.opt_local.fillchars:append({ eob = " " })
-    else
-      vim.cmd("setlocal fillchars<")
+-- Disable on nvim menu startup
+local orig_laststatus = vim.o.laststatus
+
+vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter", "FileType" }, {
+  callback = function()
+    vim.schedule(function()
+      local on_alpha = vim.bo.filetype == "alpha"
+      vim.o.laststatus  = on_alpha and 0 or orig_laststatus
+      vim.o.showtabline = on_alpha and 0 or 2
+    end)
+  end,
+})
+
+vim.api.nvim_create_autocmd("UIEnter", {
+  callback = function()
+    local buf = 0
+    -- Check if current buffer is empty, unnamed, and not modified
+    if vim.bo[buf].filetype == "" and vim.bo[buf].buftype == "" and vim.fn.bufname(buf) == "" and vim.api.nvim_buf_line_count(buf) == 1 and vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] == "" then
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(buf) then
+          vim.api.nvim_buf_delete(buf, { force = true })
+        end
+      end)
     end
   end,
 })
+

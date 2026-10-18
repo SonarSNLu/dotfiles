@@ -7,8 +7,12 @@ require("barbar").setup({
   -- Enable/disable current/total tabpages indicator (top right corner)
   tabpages = false, 
 
-  -- Autohide  the top bar unless there n amount of buffer 
-  auto_hide =  1,
+  -- Autohide  the top bar unless there no buffer 
+  auto_hide =  0,
+
+  -- Exclude to hide scratch
+  exclude_ft = { 'alpha', 'qf', 'netrw', 'nofile' },
+
 
   -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
   -- Valid options are 'left' (the default), 'previous', and 'right'

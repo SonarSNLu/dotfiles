@@ -43,6 +43,7 @@ require("catppuccin").setup({
 		},
 })
 
+
 require("gruvbox").setup({
   terminal_colors = true, -- add neovim terminal colors
   undercurl = true,
@@ -108,7 +109,7 @@ require("solarized-osaka").setup({
 })
 
 
-
+vim.g.moonflyTransparent = true
 -- if you want to get rid of toggling and just set one scheme, you can set here
 -- local colorscheme = "catppuccin"
 -- vim.cmd('silent! colorscheme catppuccin')

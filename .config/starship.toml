@@ -25,17 +25,17 @@ $cmd_duration\
 \n$character\
 """
 
-palette = "black_metal_venom"
+palette = "obsidian_purpul"
 
 # Black Metal (Venom) base16: red #79241f is the base of the gradient
-[palettes.black_metal_venom]
-color_bg1 = "#79241f"
-color_bg2 = "#65201b"
-color_bg3 = "#501b18"
-color_bg4 = "#3c1614"
-color_bg5 = "#281210"
+[palettes.obsidian_purpul]
+color_bg1 = "#835692"
+color_bg2 = "#694575"
+color_bg3 = "#4f3458"
+color_bg4 = "#34223a"
+color_bg5 = "#1a111d"
 
-color_accent = "#8fc2c2"
+color_accent = "#e6dde9"
 color_gray = "#ffffff"
 color_red = "#e5534b"
 color_white = "#ffffff"
