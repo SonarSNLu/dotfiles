@@ -49,9 +49,11 @@ Plug('ron-rs/ron.vim')                                                       --r
 Plug('MeanderingProgrammer/render-markdown.nvim')                            --render md inline
 Plug('emmanueltouzery/decisive.nvim')                                        --view csv files
 Plug('folke/twilight.nvim')                                                  --surrounding dim
-Plug('L3MON4D3/LuaSnip', { tag = 'v2.*', ['do'] = 'make install_jsregexp' }) --snippet
+Plug('lervag/vimtex')                                                        -- latex qol and document rendering for noteshttps://github.com/lervag/vimtex
+Plug('L3MON4D3/LuaSnip', { tag = 'v2.*', ['do'] = 'make install_jsregexp' }) -- snippet
 Plug('rafamadriz/friendly-snippets')                                         -- snippet library
 Plug('R-nvim/R.nvim')                                                        -- https://github.com/R-nvim/R.nvim R in nvim
+Plug('Vigemus/iron.nvim')                                                    -- Interactive Repls Over Neovim. https://www.youtube.com/watch?v=eIp31pLQ4sI
 Plug('stevearc/conform.nvim')                                                -- formatter plugin, for vite+
 Plug('neovim/nvim-lspconfig')                                                --lsp server configs (server installed separately, e.g. lua-language-server) https://luals.github.io/
 Plug('williamboman/mason.nvim')
@@ -73,6 +75,7 @@ require('plugins.lsp.lsp')
 -- Snippet setup
 require('plugins.LuaSnip')
 require('plugins.friendly-snippets')
+require('plugins.vimtex')
 
 -- Nvim tree setup
 require('nvim-tree').setup({
@@ -115,6 +118,7 @@ require("plugins.render-markdown")
 -- require("plugins.which-key")
 require("plugins.conform")
 require("plugins.R-nvim")
+require("plugins.iron-nvim")
 
 vim.defer_fn(function()
 	--defer non-essential configs,

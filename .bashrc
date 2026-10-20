@@ -27,44 +27,6 @@ HISTFILESIZE=2000
 #    ssh-add ~/.ssh/id_ed25519_SonarSNU 2>/dev/null || ssh-add ~/.ssh/id_rsa 2>/dev/null
 #fi
 
-# ---- GitHub account switcher ----
-# profile name -> key filename in ~/.ssh   (add a line per account)
-export SSH_AUTH_SOCK="$HOME/.ssh/gh-agent.sock"   # one agent shared by all terminals
-
-_gh_agent() {
-  ssh-add -l >/dev/null 2>&1
-  if [ $? -eq 2 ]; then                            # no agent reachable -> start one
-    rm -f "$SSH_AUTH_SOCK"
-    ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
-  fi
-}                                                  # <- this was missing
-
-# profile name -> key filename in ~/.ssh   (add a line per account)
-declare -A GH_KEYS=(
-  [sonar]=id_ed25519_SonarSNU
-  [portabela]=id_ed25519_Cheeba
-# [work]=id_ed25519_work
-)
-
-ghs() {
-  _gh_agent
-  case "$1" in
-    "")       ssh-add -l ;;                                  # what's unlocked now
-    off|lock) ssh-add -D ;;                                  # lock everything now
-    ls)       printf '%s\n' "${!GH_KEYS[@]}" | sort ;;       # list profiles
-    *)
-      local key="$HOME/.ssh/${GH_KEYS[$1]}"
-      if [ -z "${GH_KEYS[$1]}" ] || [ ! -f "$key" ]; then
-        echo "unknown profile or missing key file: $1"; return 1
-      fi
-      ssh-add -D 2>/dev/null                                 # lock all others first
-      ssh-add -t "${2:-4h}" "$key" ;;                        # unlock this one
-  esac
-}
-complete -W "ls off lock ${!GH_KEYS[*]}" ghs                 # tab completion
-
-alias llock='ghs off && vlock' # so vlock locking the terminal also off the ssh credential
-
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -170,57 +132,16 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#vscode path
-alias code='code --profile "Minima"'
-
-#Update OS
-alias updateos='sudo apt update && sudo apt full-upgrade -y'
-
-#Ver. check 
-alias os-ver='cat /etc/os-release'
-
-#Bash setting confing
-alias bashrc='nvim ~/.bashrc'
-
-#fd-find
-alias fd='fd-find'
-
-#Sonarcove cd from WSL
-alias Scove="nvim /mnt/d/SonarCove/"
-
-#Windows User cd from WSL
-alias lyto="nvim /mnt/c/Users/4lyto"
-
-#Wezterm config edit
-alias wzterm="nvim /mnt/c/Users/4lyto/.wezterm.lua"
-
-#Bread on penguins ytber neovim setting 
-alias nvim="NVIM_APPNAME=nvim/neovim nvim"
-
 # Created by `pipx` on 2026-10-09 19:15:34
 export PATH="$PATH:/home/Bianfuwu/.local/bin"
 
-# Automatically converts and navigates to a copied Windows path in WSL
-cw() {
-    # Strip quotes if they exist, then convert using wslpath
-    local clean_path=$(echo "$1" | tr -d '"')
-    cd "$(wslpath "$clean_path")"
-}
-
-# WSL window path helper i.e: w 'insert command'
-w() {
-    local cmd="$1"
-    local win_path=$(echo "$2" | tr -d '"')
-    local wsl_path=$(wslpath "$win_path")
-    
-    # Run the command with the converted path and any remaining arguments
-    "$cmd" "$wsl_path" "${@:3}"
-}
-
-
+		
 # fnm
 FNM_PATH="/home/Bianfuwu/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
   export PATH="$FNM_PATH:$PATH"
   eval "$(fnm env --shell bash)"
 fi
+
+#Wayland fix
+unset WAYLAND_DISPLAY
